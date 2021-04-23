@@ -146,7 +146,7 @@ ORDER BY Cost DESC
 /* PART 2: SQLite
 
 Export the country club data from PHPMyAdmin, and connect to a local SQLite instance from Jupyter notebook 
-for the following questions.  
+for the following questions.  */
 
 from sqlalchemy import create_engine
 import pandas as pd
