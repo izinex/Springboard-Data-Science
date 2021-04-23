@@ -110,27 +110,89 @@ the guest user's ID is always 0. Include in your output the name of the
 facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
 
+SELECT f.name, CONCAT(m.surname,' ',m.firstname) as MemberName, 
+CASE WHEN b.memid=0 THEN b.slots*f.guestcost 
+    ELSE b.slots*membercost END AS Cost
+FROM Bookings as b
+INNER JOIN Facilities as f
+ON b.facid = f.facid
+INNER JOIN Members as m
+ON b.memid = m.memid
+WHERE DATE(b.starttime) = '2012-09-14'
+AND CASE WHEN b.memid=0 THEN b.slots*f.guestcost 
+        ELSE b.slots*membercost END > 30
+ORDER BY Cost DESC
+
 
 
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
 
+SELECT f.name, CONCAT(m.surname,' ',m.firstname) as MemberName, 
+CASE WHEN b.memid=0 THEN b.slots*f.guestcost 
+    ELSE b.slots*membercost END AS Cost
+FROM Bookings as b
+INNER JOIN Facilities as f
+ON b.facid = f.facid
+INNER JOIN Members as m
+ON b.memid = m.memid
+WHERE DATE(b.starttime) in (SELECT DATE(starttime)
+                      FROM Bookings
+                      WHERE DATE(starttime) = '2012-09-14')
+AND CASE WHEN b.memid=0 THEN b.slots*f.guestcost 
+        ELSE b.slots*membercost END > 30
+ORDER BY Cost DESC
 
 /* PART 2: SQLite
 
 Export the country club data from PHPMyAdmin, and connect to a local SQLite instance from Jupyter notebook 
 for the following questions.  
 
+from sqlalchemy import create_engine
+import pandas as pd
+
+
+-- Establishing the connection using libraries from sqlalchemy
+engine = create_engine('sqlite:///sqlite_db_pythonsqlite.db')
+con = engine.connect()
+
+-- Was confused how to upload all 3 tables and databases but managed to establish a connection so decided
+-- to make 3 different dataframe and make them the tables from country club
+rs = con.execute("SELECT * FROM Bookings")
+Bookings = pd.DataFrame(rs.fetchall())
+Bookings.columns = rs.keys()
+Bookings
+
+rs = con.execute("SELECT * FROM Facilities")
+Facilities = pd.DataFrame(rs.fetchall())
+Facilities.columns = rs.keys()
+
+rs = con.execute("SELECT * FROM Members")
+Members = pd.DataFrame(rs.fetchall())
+Members.columns = rs.keys()
+Members
+
 QUESTIONS:
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
 that there's a different cost for guests and members! */
 
+facilities_with_less_than_10k_revenue = pd.read_sql_query("SELECT name, sum(case when memid = 0 then slots * guestcost else slots * membercost end) as Revenue FROM Bookings LEFT JOIN Facilities using(facid) GROUP BY name HAVING Revenue < 1000",engine)
+
+facilities_with_less_than_10k_revenue
+
+
 /* Q11: Produce a report of members and who recommended them in alphabetic surname,firstname order */
 
+recommended_members = pd.read_sql_query("select (a.surname || ' ' || a.firstname) as members, (b.surname || ' ' || b.firstname) as recommended_by from Members a, Members b where a.recommendedby >0 and a.recommendedby = b.memid order by b.surname", engine)
+recommended_members
 
 /* Q12: Find the facilities with their usage by member, but not guests */
 
+facility_usage_by_members = pd.read_sql_query("SELECT name, (firstname || ' ' || surname) as MemberName, COUNT(surname) as 'Usage' FROM Bookings INNER JOIN Facilities USING(facid) INNER JOIN Members USING(memid) WHERE memid != 0 GROUP BY name, MemberName", engine)
+facility_usage_by_members
 
 /* Q13: Find the facilities usage by month, but not guests */
 
+facility_usage_by_month = pd.read_sql_query("SELECT strftime('%m', starttime) as Month, name, COUNT(name) as Usage FROM Bookings INNER JOIN Facilities USING(facid) WHERE memid != 0 GROUP BY Month, name", engine)
+facility_usage_by_month
