@@ -20,18 +20,18 @@
 
        \vspace{0.5cm}
         Predicting Home Prices
-            
+
        \vspace{0.5cm}
 
        \textbf{Pizon Shetu}
-            
+
        \vspace{0.5cm}
 
        September, 2021
    \end{center}
 
 \tableofcontents
-
+\clearpage
 \section{Problem}
     New York City(NYC) is one of the largest financial central hub on Earth, it has the 44$^{th}$ largest population of all cities in the world which makes it a prime area for growing real-estate investments. The Housing Market has been booming since the great recession of 2008, as prices keep skyrocketing our client Capital Fortune who are a mid-west real-estate investment trust are seeking an opportunity to capitalize on this growth. They have multiple properties set to be built in the 5 boroughs of New York City by 2025. They are seeking our help with identifying key insights and intrinsic value behind the homes in the 5 boroughs.  \\
     \\
@@ -42,7 +42,7 @@
 \section{Data}
 \subsection{Data Collection}
     There are many historical data sets available on New York City housing prices but I wanted to make use of recent and real home prices given in listing websites. Zillow is a real estate listing platform for buyers and sellers to do business, they utilize their Zestimates prediction to garner new users to estimate their own home values. While I will not be working with their Zestimates prediction feature I will be using their New York City Housing data set from $2019$. The data set contains $75630$ observations and $1507$ columns.
-    
+
 \subsection{Data Wrangling}
 \subsubsection{Data Cleaning}
     With such a massive data set and many features it also came with its inconsistencies and missing values. This was a very dirty data set with many irrelevant and redundant columns. Features consisted of photos, nearest schools, parking, built year, taxes, and etc. Much of these features needed to be trimmed, I began with removal of all columns that were redundant or had missing values above a threshold. Additional I kept few features that I deemed valuable even though they might have had high missing values, such as bedrooms, and total bathrooms. \\
@@ -54,16 +54,16 @@
     Originally I had attempted a simple imputation method of imputing with mean and median values and this resulted in poor predictions and attempted to do selective imputation where each feature values were imputed based on their price bracket. While in theory this would ideally result in better predictions than imputation of the mean and median but this had worse results. \\
     \\
     Utilizing and following the steps of Multiple Imputation by Chained Equations(MICE), I've realized I can do better imputation this way and retain more observations but at the cost of computational time. MICE imputation is a imputation method which replaces missing data values under certain assumptions based on the data sets 'missingness' pattern. Here are the steps to MICE imputation:
-    
+
     \begin{itemize}
-        \item \textbf{Step 1} Impute missing values in each feature with a 'place holder' from only the non-missing values for each specific feature. Replace with the average of that specific feature or median in cases of categorical. 
+        \item \textbf{Step 1} Impute missing values in each feature with a 'place holder' from only the non-missing values for each specific feature. Replace with the average of that specific feature or median in cases of categorical.
         \item \textbf{Step 2} Set a feature's 'place holder' back to missing
         \item \textbf{Step 3} The observed values from the feature "var1" in Step 2 are regressed on the other features in the imputation model, which may or may not consist of all of the features in the dataset. In other words, “var1” is the dependent variable in any given model and all the other variables are independent variables in that  model.
         \item \textbf{Step 4} The missing values for feature "var1" are replaced with imputations or 'predictions' from the model.
         \item \textbf{Step 5} Repeat Steps 2-4 for each feature that has missing values, and each iteration that is done is called a "cycle". After each cycle all missing values are imputed with predictions from selected model.
-        \item \textbf{Step 6} Repeat Step 5 for a number of cycles, with each cycle imputations are updated with new and improved 'predictions'. 
+        \item \textbf{Step 6} Repeat Step 5 for a number of cycles, with each cycle imputations are updated with new and improved 'predictions'.
     \end{itemize}
-    
+
     Thus I attempted a redo of my Data Wrangling and EDA with a MICE imputation and the model for the imputations I selected Gradient Boosting Regression. With the new imputations in place I was able to retain more columns and observations as well since originally I had omitted many observation and features due to difficulty of imputing their missing data. My final data set contained $62456$ observation and $32$ columns.
 \subsubsection{Reverse Geolocation}
     With the availability of latitude and longitude in the data set, I've decided to utilize GMAP's ability to reverse geo-locate any given coordinates and get their zipcode, address, neighborhood, and borough. As the task at hand required us to identify trends and insights into housing prices of different boroughs this was crucial. But this is where a major problem appeared while the reverse geolocating was viable, it was a time-consuming process. This made it very difficult for reproducibility. \\
@@ -72,8 +72,8 @@
     \begin{center}
         \includegraphics[width=12cm, height=12cm]{NYC_maps_houses.png}
     \end{center}
-    
-    
+
+
 \section{Exploratory Data Analysis(EDA)}
 
 Exploratory Data Analysis was attempted three times throughout this project, first was done without MICE imputation which is showed in notebook Exploratory-Data-Analysis, a re-do  was done after MICE Imputation showed in notebook inside Redo folder called Data Visualization and EDA and a final was done showed in the notebook analysis-test.\\
@@ -81,7 +81,7 @@ Exploratory Data Analysis was attempted three times throughout this project, fir
 There were various findings but the most important was how influential location was compared to other factors. Even with homes with much more luxuries paled in comparison to homes in select areas. You could have a house on Staten Island with 6 bedrooms and 3 bathrooms with over 4000 square and still be more affordable than a home on Manhattan. \\
 \subsection{Features}
 Features were a key factor in this project and our models needed the right combination to be effective. One of many roadblocks with this data set was working with this feature set not only did many features having missing values, others had wrong entries and ultimately as we will see it was difficult to properly predict. \\
-\\ 
+\\
 In order find the relations of features on price I looked into a Spearman correlation of all features to other features. A Spearman rank correlation is a non-parametric assessment which measures the level of interconnection between two variables in our case two features. Spearman correlation is done by taking the Pearson correlation coefficient on ranked data and making $\rho$ between $-1$ and $1$ which determines the two variables relationship. As $\rho$ deviates further away from zero leans toward $1$ or $-1$ the stronger the relationship is. If $\rho$ is towards 1 it indicates if one variable increase so does the other. Whereas if $\rho$ is towards -1 then this indicates as one variable increase the other is likely to decrease.\\
 
 Here is a heatmap of Spearman Correlation of our data set
@@ -89,20 +89,20 @@ Here is a heatmap of Spearman Correlation of our data set
         \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{heatmap.png}
     \end{center}
 
-There is a strong correlation between 'Tax assessed value', 'Annual tax', and 'livingArea' but for the most part it seems there is not a lot of relationship between 'price' and rest of the features so I opted to utilize gradient boosting's and all decision tree neat attribute called feature importance's, this allows us to see which features impacted the most when making decisions. Here is a chart of most important features 
+There is a strong correlation between 'Tax assessed value', 'Annual tax', and 'livingArea' but for the most part it seems there is not a lot of relationship between 'price' and rest of the features so I opted to utilize gradient boosting's and all decision tree neat attribute called feature importance's, this allows us to see which features impacted the most when making decisions. Here is a chart of most important features
 
 \begin{wrapfigure}{r}{0.8\textwidth}
-\includegraphics[width=0.85\textwidth, height=0.25\textheight]{features.png} 
+\includegraphics[width=0.85\textwidth, height=0.25\textheight]{features.png}
 \label{fig:wrapfig}
 \end{wrapfigure}
-Like our heatmap Taxes and other highly correlated features have more impact but surprisingly latitude and longitude contributed more than our heatmap might have lead us to believe. This will be further explained once we see how important location really is.  
+Like our heatmap Taxes and other highly correlated features have more impact but surprisingly latitude and longitude contributed more than our heatmap might have lead us to believe. This will be further explained once we see how important location really is.
 \subsection{Home Distributions}
 Looking at distribution of homes in New York City it was interesting to see which price bracket most homes were being sold at.
 
 \begin{figure}[ht]
 
 \begin{subfigure}{.5\textwidth}
-\includegraphics[width=0.95\linewidth]{disthomeprice.png} 
+\includegraphics[width=0.95\linewidth]{disthomeprice.png}
 \caption{Median Price of New York City nearing $\$700,000$ }
 \label{fig:subim1}
 \end{subfigure}
@@ -122,7 +122,7 @@ As the median price of NYC is nears $\$700,000$ it is significantly higher than 
 
 
 \subsection{Borough Distribution}
-While New York City seeks a premium compared to national median house prices, this is further true in New York City's local market as well. We will now look at how each borough of NYC and how homes prices distributed. 
+While New York City seeks a premium compared to national median house prices, this is further true in New York City's local market as well. We will now look at how each borough of NYC and how homes prices distributed.
 \newline
 \\
 
@@ -138,7 +138,7 @@ We can see prices in Manhattan are the most spread, while homes in Bronx, Staten
 \begin{figure}[ht]
 
 \begin{subfigure}{.5\textwidth}
-\includegraphics[width=0.95\linewidth]{borough_price.png} 
+\includegraphics[width=0.95\linewidth]{borough_price.png}
 \label{fig:subim3}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
@@ -156,24 +156,24 @@ This indicates how important location really is and explains why we saw longitud
 \\
 As we follow the graph below we can see New York City as greatly appreciated, and this even more true for Manhattan who has seen significant gains, note this is only data from 2003-2014 and not recent as this figure is much higher today.
 \begin{figure}[ht]
-    
+
 \includegraphics[width=.95\linewidth]{historicalnycprice.jpg}
 \caption{Thanks to Miller Samuel Inc. I was able to obtain historical average home prices in New York City from 2003 to 2014. All rights and credit for the following graph goes to this \href{https://www.millersamuel.com/charts/new-york-city-residential-average-sales-price-includingexcluding-manhattan/}{link}}
 
 \end{figure}
 
 \subsection{Years effect on Homes}
-Looking into how the year when a house was built and its effects  on the price of the house was surprising. Looking at the chart below of average house price of homes built throughout the years by decades we see during the 1800's and early 1900's have the greatest appreciation, but this is misleading as $70\%$ of all homes were in either Manhattan or Brooklyn. But looking into more recent trends we saw and uptick of average price increases to newer homes and $53\%$ of these homes were in Queens and Staten Island thus not being skewed by high prices of the other boroughs. 
+Looking into how the year when a house was built and its effects  on the price of the house was surprising. Looking at the chart below of average house price of homes built throughout the years by decades we see during the 1800's and early 1900's have the greatest appreciation, but this is misleading as $70\%$ of all homes were in either Manhattan or Brooklyn. But looking into more recent trends we saw and uptick of average price increases to newer homes and $53\%$ of these homes were in Queens and Staten Island thus not being skewed by high prices of the other boroughs.
 
 \begin{center}
         \includegraphics[width=.65\paperwidth, height= .25\paperwidth, keepaspectratio]{houseyearprice.png}
 \end{center}
 
 \subsection{Property Type}
-I wanted check how a property type and its effect on the house was, but due to the constraints of inaccurate data of this data set it was difficult to pinpoint the specific details of its effects on home price. Nevertheless I  was still able get some insights. 
+I wanted check how a property type and its effect on the house was, but due to the constraints of inaccurate data of this data set it was difficult to pinpoint the specific details of its effects on home price. Nevertheless I  was still able get some insights.
 \begin{figure}[H]
 \begin{subfigure}{.5\textwidth}
-\includegraphics[width=0.95\linewidth]{hometypeprice.png} 
+\includegraphics[width=0.95\linewidth]{hometypeprice.png}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
 \includegraphics[width=0.95\linewidth]{hometypecount.png}
@@ -183,11 +183,11 @@ I wanted check how a property type and its effect on the house was, but due to t
 \clearpage
 I was surprised to see how valuable Townhouses were but looking at the number of Townhouses in the data set we can see this can be easily skewed, same is true for Mixed Use properties.\\
 \\
-Looking at our findings I believe it is very difficult to pinpoint how much home type influences prices. NYC prices tends to vary heavily on location and so while a Condo might be only $\$200,000$ in Staten Island it can be over $\$2,000,000$ in Manhattan. But it cannot be denied that homes that are meant for condo's and multiple family homes see high valuation. There is always need for housing for families Fortune Capital can always feel secured knowing they built homes for multiple families, if not sold it can always be rented out for passive income.    
+Looking at our findings I believe it is very difficult to pinpoint how much home type influences prices. NYC prices tends to vary heavily on location and so while a Condo might be only $\$200,000$ in Staten Island it can be over $\$2,000,000$ in Manhattan. But it cannot be denied that homes that are meant for condo's and multiple family homes see high valuation. There is always need for housing for families Fortune Capital can always feel secured knowing they built homes for multiple families, if not sold it can always be rented out for passive income.
 
 \section{Model Selection}
 \subsection{Metrics of Evaluation}
-Selecting the right metric is key in order to evaluate performance, these are the following metrics we will be using to evaluate our models. 
+Selecting the right metric is key in order to evaluate performance, these are the following metrics we will be using to evaluate our models.
 \begin{itemize}
   \item R² - R² shows how well terms (data points) fit a curve or line.
   \item MAE - Mean absolute error (On average how far is the prediction from the actual).
@@ -197,17 +197,17 @@ Selecting the right metric is key in order to evaluate performance, these are th
 \end{itemize}
 Ideally you like to see all the metrics improve with each respective model but that is not always the case for that reason we will be using MAE as the main metric
 \subsection{Linear Model}
-Linear regression model is one of the fundamental models all machine learning course teach, it is machine learning algorithm which relies on supervised learning. Regression models in general dependent value based on its independent variables. It is mostly used for finding out the relationship between variables and predictions. There are different regression model which differ by the kind of interaction dependent and independent variables have. 
+Linear regression model is one of the fundamental models all machine learning course teach, it is machine learning algorithm which relies on supervised learning. Regression models in general dependent value based on its independent variables. It is mostly used for finding out the relationship between variables and predictions. There are different regression model which differ by the kind of interaction dependent and independent variables have.
 \\
 \begin{wrapfigure}{r}{0.45\textwidth}
-\includegraphics[width=0.3\textwidth, height=0.3\textheight, keepaspectratio]{lm.PNG} 
+\includegraphics[width=0.3\textwidth, height=0.3\textheight, keepaspectratio]{lm.PNG}
 \label{fig:wrapfig2}
 \end{wrapfigure}
-Here are the results from using LinearRegression from scikit learn package, we can see linear model results are really far from actual price. 
+Here are the results from using LinearRegression from scikit learn package, we can see linear model results are really far from actual price.
 \subsection{Nearest Neighbor}
 
 
-K-Nearest Neighbors is another fundamental but basic classification algorithm used in Machine Learning. It is also based on supervised learning sees usage in application of pattern recognition, data mining and etc. It works by selecting a single data point in the data set and finding the closest 'neighbors' in other words other data points, this is done via a chosen distance formula and given the number of 'K' neighbors that data point is predicted to be the majority of its neighbors.  
+K-Nearest Neighbors is another fundamental but basic classification algorithm used in Machine Learning. It is also based on supervised learning sees usage in application of pattern recognition, data mining and etc. It works by selecting a single data point in the data set and finding the closest 'neighbors' in other words other data points, this is done via a chosen distance formula and given the number of 'K' neighbors that data point is predicted to be the majority of its neighbors.
 
 \begin{center}
 \includegraphics[width=0.3\textwidth, height=0.3\textheight, keepaspectratio]{knn.PNG}
@@ -216,7 +216,7 @@ K-Nearest Neighbors is another fundamental but basic classification algorithm us
 I did further parameter tuning as the number of neighbors selected dictates how well our model does, after some parameter tuning we ended up with an MAE of $249954.9095$, better but not good enough.
 \subsection{Random Forest}
 
-Random Forest is an decision which use an ensemble technique being able to perform both regression and classification problems. Utilizing  bootstrapping which randomly samples from the datasets for each tree and performing aggregation, together known as bagging it is able to complete its tasks. It basically combines many decision trees to decide what the final output should rather than only relying on a singular decision tree.  
+Random Forest is an decision which use an ensemble technique being able to perform both regression and classification problems. Utilizing  bootstrapping which randomly samples from the datasets for each tree and performing aggregation, together known as bagging it is able to complete its tasks. It basically combines many decision trees to decide what the final output should rather than only relying on a singular decision tree.
 
 \begin{center}
 \includegraphics[width=0.3\textwidth, height=0.3\textheight, keepaspectratio]{rf.PNG}
@@ -245,7 +245,7 @@ From all the models we got the best results from XGBoost's gradient boost and th
 \end{center}
 
 \subsection{Hyper-parameter Tuning}
-Hyper parameters are variables in the algorithm we choose that we can tune in our case of XGBoost these values are: 
+Hyper parameters are variables in the algorithm we choose that we can tune in our case of XGBoost these values are:
 \begin{itemize}
     \item eta - which is the learning rate of our model which is the shrinkage you do at every step you are making, increasing this allows for much faster computation where as decreasing this allows for best optimum result
     \item max depth - controls how complex a model becomes, more depth more likely it is to over-fit where too little leads to simple and underfitting model
@@ -255,8 +255,8 @@ Hyper parameters are variables in the algorithm we choose that we can tune in ou
 \end{itemize}
 
 These values control the learning process and determine the values of model parameters that a learning algorithm ends up learning, this is not to be confused for our model's features/variables. The process of tuning might seem simple but the time consumed can be long, its is important to remember even if a better result can be achieved by a lengthy search process but is it worth the time invested. \\
-\\ 
-Here are the final results after fine-tuning each of the values listed above. 
+\\
+Here are the final results after fine-tuning each of the values listed above.
 \begin{center}
 \includegraphics[width=0.7\textwidth, height=0.7\textheight, keepaspectratio]{gbtuned.PNG}
 \end{center}
@@ -267,14 +267,14 @@ We saw that more expensive houses are older houses but upon a closer look this i
 \\
 On average we can expect homes build in Manhattan to run between 1 to 3 million more compared to other boroughs with an average price of 3 million for a newly build home. Next would be Brooklyn with an average price of 1.2 million for a newly build home and then Queens with 800K. Bronx and Staten Island might not be as lucrative as its neighbors, but they can be much to be desired as a newly build home on Bronx can be around 600K and for Staten Island 500K. \\
 \\
-Capital Fortune is also poised to make higher returns on their homes as their homes will be brand new construction. With newer homes one can expect an average of $\$50,000-150,000$ premium versus a old or remodeled home. 
+Capital Fortune is also poised to make higher returns on their homes as their homes will be brand new construction. With newer homes one can expect an average of $\$50,000-150,000$ premium versus a old or remodeled home.
 
 \section{Personal Takeaways and Further Study}
 
-This was a tedious and interesting project to work on, working with such dirty raw data really gave me and appreciation for data collection and integrity. It really changed my perspective and learning experience on how to properly clean and wrangle data. I would like to see how different results would have been in different markets as NYC is a very sought after and the gap between Manhattan compared to Bronx or Staten Island is staggering. 
+This was a tedious and interesting project to work on, working with such dirty raw data really gave me and appreciation for data collection and integrity. It really changed my perspective and learning experience on how to properly clean and wrangle data. I would like to see how different results would have been in different markets as NYC is a very sought after and the gap between Manhattan compared to Bronx or Staten Island is staggering.
 \\
 \\
-I believe there is more data we can compile for better predictions for instances the construction costs of homes, or prices of goods and services in the proximity of the house. I would love to continue this and look into the whole United States housing market and how different cities, or states compare and how different features impact the overall market compared to local markets.  
+I believe there is more data we can compile for better predictions for instances the construction costs of homes, or prices of goods and services in the proximity of the house. I would love to continue this and look into the whole United States housing market and how different cities, or states compare and how different features impact the overall market compared to local markets.
 
 
 \end{titlepage}
