@@ -4,7 +4,10 @@ All projects and assignments for spring data science course
 
 
 ## Hi There My Name is Pizon Shetu, and this is the repository for all my work done in Springboard Data Science Curriculum
-This repository is compiled with many projects and case studies customized and curated by Springboard. From Data Wrangling/Cleaning to Exploratory Data Analysis and Machine Learning modeling, this repository contains many projects which dedicates to each individual steps to full-blown project which incorporates all these steps. My capstone 2 was done on the New York City Housing Market which incorporates all the steps mentioned above. There many application of machine learning models such as decision trees, kNN, and etc. Thank you for taking the time and looking over my work and apologizes ahead of time for lack of comments commits as when I had started this journey I had not appreciated the value of proper commenting and documentation.
+This repository is compiled with many projects and case studies customized and curated by Springboard. From Data Wrangling/Cleaning to Exploratory Data Analysis and Machine Learning modeling, this repository contains many projects which dedicates to each individual steps to full-blown project which incorporates all these steps. My capstone 2 was done on the New York City Housing Market which incorporates all the steps mentioned above. There many application of machine learning models such as decision trees, kNN, and etc. 
+<br />
+
+Thank you for taking the time and looking over my work and apologizes ahead of time for lack of comments commits as when I had started this journey I had not appreciated the value of proper commenting and documentation.
 <br />
 <br />
 
