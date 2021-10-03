@@ -1,7 +1,7 @@
 NYC Housing Market
 ==============================
 
-This project uses Billboard Hot 100 and Spotify API data to make predictions on a song's potential to make it onto the Billboard Hot 100 (become a mainstream hit).
+In depth Analysis on the ever growing real-estate market of New York City, I will be looking into factors that influence price of homes in NYC, and making predictions using machine learning on Zillow's 2019 NYC housing data set
 
 Go to Report: [PDF](https://github.com/izinex/Springboard-Data-Science/blob/master/Capstone%202%20-%20NYC%20Housing%20Prediction/NYC_Housing_Report.pdf)
 
