@@ -1,0 +1,2 @@
+birds filter=lfs diff=lfs merge=lfs -text
+Notebooks filter=lfs diff=lfs merge=lfs -text
