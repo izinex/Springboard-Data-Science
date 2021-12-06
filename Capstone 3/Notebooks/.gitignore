@@ -2,3 +2,7 @@ Tuners
 X_test_file.npy
 X_train_file.npy
 X_valid_file.npy
+variables
+vg_model
+vg_tuned_model
+efficientnet0_model
